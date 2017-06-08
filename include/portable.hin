@@ -1111,9 +1111,6 @@
 /* define to snprintf routine */
 #undef snprintf
 
-/* Define like ber_socklen_t if <sys/socket.h> does not define. */
-#undef socklen_t
-
 /* Define to `signed int' if <sys/types.h> does not define. */
 #undef ssize_t
 

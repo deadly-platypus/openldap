@@ -53,6 +53,8 @@ LDAP_BEGIN_DECL
 
 #define MDB_MONITOR_IDX
 
+typedef unsigned uint32_t;
+
 typedef struct mdb_monitor_t {
 	void		*mdm_cb;
 	struct berval	mdm_ndn;
