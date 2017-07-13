@@ -40,6 +40,10 @@
 #include "slap.h"
 #include <lutil.h>
 
+#ifndef MAXPATHLEN
+#define MAXPATHLEN 4096
+#endif
+
 FILE *
 lock_fopen( const char *fname, const char *type, FILE **lfp )
 {

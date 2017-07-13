@@ -1,3 +1,6 @@
+*.ll
+ir/
+
 # for Unix/Linux
 *~
 *.o

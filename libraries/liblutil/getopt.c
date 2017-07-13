@@ -22,7 +22,7 @@
 
 #include "portable.h"
 
-#ifndef HAVE_GETOPT
+//#ifndef HAVE_GETOPT
 
 #include <stdio.h>
 
@@ -133,4 +133,4 @@ printf("DF_TRACE_DEBUG: 	int getopt () in getopt.c\n");
 	}
 	return (int) c;
 }
-#endif /* HAVE_GETOPT */
+//#endif /* HAVE_GETOPT */

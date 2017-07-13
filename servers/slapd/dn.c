@@ -731,6 +731,7 @@ dnPrettyNormal(
 			return LDAP_INVALID_SYNTAX;
 		}
 
+        printf("%s : %d %d\n", val->bv_val, val->bv_len, strlen(val->bv_val));
 		assert( strlen( val->bv_val ) == val->bv_len );
 
 		/*

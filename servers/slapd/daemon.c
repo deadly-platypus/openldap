@@ -1279,6 +1279,8 @@ errexit:
 	return -1;
 }
 
+const char *inet_ntop(int af, const void *src, char *dst, socklen_t size);
+
 static int
 slap_open_listener(
 	const char* url,
@@ -1542,7 +1544,8 @@ slap_open_listener(
 			char addr[INET_ADDRSTRLEN];
 			const char *s;
 #if defined( HAVE_GETADDRINFO ) && defined( HAVE_INET_NTOP )
-			s = inet_ntop( AF_INET, &((struct sockaddr_in *)*sal)->sin_addr,
+			printf("Sending %p to inet_ntop\n", addr);
+            s = inet_ntop( AF_INET, &((struct sockaddr_in *)*sal)->sin_addr,
 				addr, sizeof(addr) );
 #else /* ! HAVE_GETADDRINFO || ! HAVE_INET_NTOP */
 			s = inet_ntoa( ((struct sockaddr_in *) *sal)->sin_addr );

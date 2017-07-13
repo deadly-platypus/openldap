@@ -829,7 +829,7 @@ sb_debug_read( Sockbuf_IO_Desc *sbiod, void *buf, ber_len_t len )
 	ret = LBER_SBIOD_READ_NEXT( sbiod, buf, len );
 	if (sbiod->sbiod_sb->sb_debug & LDAP_DEBUG_PACKETS) {
 		int err = sock_errno();
-		if ( ret < 0 ) {
+		/*if ( ret < 0 ) {
 			ber_log_printf( LDAP_DEBUG_PACKETS, sbiod->sbiod_sb->sb_debug,
 				"%sread: want=%ld error=%s\n", (char *)sbiod->sbiod_pvt,
 				(long)len, AC_STRERROR_R( err, ebuf, sizeof ebuf ) );
@@ -839,7 +839,7 @@ sb_debug_read( Sockbuf_IO_Desc *sbiod, void *buf, ber_len_t len )
 				(long)len, (long)ret );
 			ber_log_bprint( LDAP_DEBUG_PACKETS, sbiod->sbiod_sb->sb_debug,
 				(const char *)buf, ret );
-		}
+		}*/
 		sock_errset(err);
 	}
 	return ret;
@@ -854,7 +854,7 @@ sb_debug_write( Sockbuf_IO_Desc *sbiod, void *buf, ber_len_t len )
 	ret = LBER_SBIOD_WRITE_NEXT( sbiod, buf, len );
 	if (sbiod->sbiod_sb->sb_debug & LDAP_DEBUG_PACKETS) {
 		int err = sock_errno();
-		if ( ret < 0 ) {
+		/*if ( ret < 0 ) {
 			ber_log_printf( LDAP_DEBUG_PACKETS, sbiod->sbiod_sb->sb_debug,
 				"%swrite: want=%ld error=%s\n",
 				(char *)sbiod->sbiod_pvt, (long)len,
@@ -865,7 +865,7 @@ sb_debug_write( Sockbuf_IO_Desc *sbiod, void *buf, ber_len_t len )
 				(char *)sbiod->sbiod_pvt, (long)len, (long)ret );
 			ber_log_bprint( LDAP_DEBUG_PACKETS, sbiod->sbiod_sb->sb_debug,
 				(const char *)buf, ret );
-		}
+		}*/
 		sock_errset(err);
 	}
 

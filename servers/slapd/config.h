@@ -14,6 +14,10 @@
  * <http://www.OpenLDAP.org/license.html>.
  */
 
+#ifndef PATH_MAX
+#define PATH_MAX    512
+#endif
+
 #ifndef CONFIG_H
 #define CONFIG_H
 

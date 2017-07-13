@@ -378,6 +378,7 @@ int
 mdb_back_initialize(
 	BackendInfo	*bi )
 {
+    printf("mdb_back_initialize called\n");
 	int rc;
 
 	static char *controls[] = {

@@ -75,6 +75,10 @@
 #include <fcntl.h>
 #endif
 
+# ifndef SSIZE_MAX
+#  define SSIZE_MAX	INT_MAX
+# endif
+
 #if defined(__mips) && defined(__linux)
 /* MIPS has cache coherency issues, requires explicit cache control */
 #include <asm/cachectl.h>

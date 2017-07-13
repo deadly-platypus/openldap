@@ -351,7 +351,7 @@ usage( char *name )
 #ifdef HAVE_NT_SERVICE_MANAGER
 void WINAPI ServiceMain( DWORD argc, LPTSTR *argv )
 #else
-int main( int argc, char **argv )
+int sgx_main( int argc, char **argv )
 #endif
 {
 	int		i, no_detach = 0;

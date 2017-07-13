@@ -38,14 +38,16 @@
 
 #ifdef HAVE_SYS_ERRLIST
 	/* this is thread safe */
-#	define	STRERROR(e) ( (e) > -1 && (e) < sys_nerr \
-			? sys_errlist[(e)] : _AC_ERRNO_UNKNOWN )
+/*#	define	STRERROR(e) ( (e) > -1 && (e) < sys_nerr \
+			? sys_errlist[(e)] : _AC_ERRNO_UNKNOWN )*/
+#	define	STRERROR(e) ( _AC_ERRNO_UNKNOWN )
 
 #elif defined( HAVE_STRERROR )
 	/* this may not be thread safe */
 	/* and, yes, some implementations of strerror may return NULL */
-#	define	STRERROR(e) ( strerror(e) \
-		? strerror(e) : _AC_ERRNO_UNKNOWN )
+/*#	define	STRERROR(e) ( strerror(e) \
+		? strerror(e) : _AC_ERRNO_UNKNOWN )*/
+#	define	STRERROR(e) ( _AC_ERRNO_UNKNOWN )
 
 #else
 	/* this is thread safe */
