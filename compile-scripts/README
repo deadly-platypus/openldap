@@ -2,15 +2,14 @@ To Create U:
 1. make -B > nothread.make
 2. python compile-scripts/gen-ir.py nothread.make ~/code/SGXC/build/bin/clang
 3. ./compile-scripts/finish-gen-ir.sh ~/code/SGXC/build/bin/clang
-4. clang -g -m64 -S -emit-llvm  -o servers/slapd/get_real_passwd.ll -c servers/slapd/get_real_passwd.c
-5. python compile-scripts/transfer.py ir
-6. ./compile-scripts/opt.sh ir
-7. ./compile-scripts/llc.sh ir servers_slapd_main
-8. clang -m64 -g -nostdlib -shared ir/support/sgx_start.o ir/support/dll_startup.o ir/support/checks.o ir/*.o ir/support/sgx_end.o 2>&1 > /dev/null | awk '{if(!a[$5]++) print $5;}' | grep "'" | sed "s/[\`']//g" > ir/support/lf.intermediate
-9. grep -w -f ir/support/lf.intermediate ir/support/support.lf | awk '{if(!a[$2]++)        print $0;}' > ir/support/pruned.lf
-10. python compile-scripts/gen-stubs.py ir/support/pruned.lf ir/support/l_stubs.s
-11. clang -g -m64 -o ir/support/l_stubs.o -c ir/support/l_stubs.s
-12. ./compile-scripts/gen-u.sh ir
+4. python compile-scripts/transfer.py ir
+5. ./compile-scripts/opt.sh ir
+6. ./compile-scripts/llc.sh ir servers_slapd_main
+7. clang -m64 -g -nostdlib -shared ir/support/sgx_start.o ir/support/dll_startup.o ir/support/checks.o ir/*.o ir/support/sgx_end.o 2>&1 > /dev/null | awk '{if(!a[$5]++) print $5;}' | grep "'" | sed "s/[\`']//g" > ir/support/lf.intermediate
+8. grep -w -f ir/support/lf.intermediate ir/support/support.lf | awk '{if(!a[$2]++)        print $0;}' > ir/support/pruned.lf
+9. python compile-scripts/gen-stubs.py ir/support/pruned.lf ir/support/l_stubs.s
+10. clang -g -m64 -o ir/support/l_stubs.o -c ir/support/l_stubs.s
+11. ./compile-scripts/gen-u.sh ir
 
 To Create L:
 1. python compile-scripts/gen-l-wrappers.py ir/support/pruned.lf > ir/support/l_wrappers.c
