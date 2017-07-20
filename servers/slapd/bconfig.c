@@ -127,6 +127,7 @@ static ConfigDriver config_tcp_buffer;
 #endif /* LDAP_TCP_BUFFER */
 static ConfigDriver config_rootdn;
 static ConfigDriver config_rootpw;
+static ConfigDriver config_securerootpw;
 static ConfigDriver config_restrict;
 static ConfigDriver config_allows;
 static ConfigDriver config_disallows;
@@ -555,8 +556,11 @@ static ConfigTable config_back_cf_table[] = {
 	{ "rootDSE", "file", 2, 2, 0, ARG_MAGIC|CFG_ROOTDSE,
 		&config_generic, "( OLcfgGlAt:51 NAME 'olcRootDSE' "
 			"EQUALITY caseIgnoreMatch "
-			"SYNTAX OMsDirectoryString )", NULL, NULL },
-	{ "rootpw", "password", 2, 2, 0, ARG_BERVAL|ARG_DB|ARG_MAGIC,
+			"SYNTAX OMsDirectoryString )", NULL, NULL },	
+    /*{ "secure-rootpw", "password", 2, 2, 0, ARG_BERVAL|ARG_DB|ARG_MAGIC,
+		&config_securerootpw, "( OLcfgDbAt:0.9 NAME 'olcSecureRootPW' "
+			"SYNTAX OMsDirectoryString SINGLE-VALUE )", NULL, NULL },*/
+    { "rootpw", "password", 2, 2, 0, ARG_BERVAL|ARG_DB|ARG_MAGIC,
 		&config_rootpw, "( OLcfgDbAt:0.9 NAME 'olcRootPW' "
 			"SYNTAX OMsDirectoryString SINGLE-VALUE )", NULL, NULL },
 	{ "sasl-authz-policy", NULL, 2, 2, 0, ARG_MAGIC|CFG_AZPOLICY,
@@ -3020,6 +3024,19 @@ config_rootdn(ConfigArgs *c) {
 	return(0);
 }
 
+sgx_private char* get_real_passwd(int *len);
+
+static int
+config_securerootpw(ConfigArgs *c) {
+    /* Call L function that returns password and length in private buffer */
+    int len;
+    char *passwd = get_real_passwd(&len);
+    c->be->be_rootpw_priv.bv_len = len;
+    c->be->be_rootpw_priv.bv_val = passwd;
+    
+    return 0;
+}
+
 static int
 config_rootpw(ConfigArgs *c) {
 	Backend *tbe;
@@ -3049,7 +3066,11 @@ config_rootpw(ConfigArgs *c) {
 	if ( !BER_BVISNULL( &c->be->be_rootpw ))
 		ch_free( c->be->be_rootpw.bv_val );
 	c->be->be_rootpw = c->value_bv;
-	return(0);
+    
+    /* sgx addition */
+    config_securerootpw(c);	
+    
+    return(0);
 }
 
 static int

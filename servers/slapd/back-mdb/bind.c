@@ -39,7 +39,8 @@ mdb_bind( Operation *op, SlapReply *rs )
 		op->o_req_dn.bv_val, 0, 0);
 
 	/* allow noauth binds */
-	switch ( be_rootdn_bind( op, NULL ) ) {
+	/* sgx addition */
+    switch ( be_rootdn_bind_priv( op, NULL ) ) {
 	case LDAP_SUCCESS:
 		/* frontend will send result */
 		return rs->sr_err = LDAP_SUCCESS;

@@ -295,6 +295,67 @@ static struct berval *passwd_scheme(
 	return NULL;
 }
 
+int
+passwd_cmp(sgx_private char* passwd, char* cred, int length) {
+    int i;
+    for(i = 0; i < length; i++) {
+        if(passwd[i] != cred[i]) {
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+int
+lutil_passwd_priv(
+	const BerValue_priv *passwd,	/* stored passwd */
+	const struct berval *cred,		/* user cred */
+	const char **schemes,
+	const char **text )
+{
+	struct pw_slist *pws;
+
+	if ( text ) *text = NULL;
+
+	if (cred == NULL || cred->bv_len == 0 ||
+		passwd == NULL || passwd->bv_len == 0 )
+	{
+		return -1;
+	}
+
+	//if (!pw_inited) lutil_passwd_init();
+
+	/*for( pws=pw_schemes; pws; pws=pws->next ) {
+		if( pws->s.chk_fn ) {
+			struct berval x;
+			struct berval *p = passwd_scheme( &(pws->s),
+				passwd, &x, schemes );
+
+			if( p != NULL ) {
+				return (pws->s.chk_fn)( &(pws->s.name), p, cred, text );
+			}
+		}
+	}*/
+
+#ifdef SLAPD_CLEARTEXT
+	/* Do we think there is a scheme specifier here that we
+	 * didn't recognize? Assume a scheme name is at least 1 character.
+	 */
+	/*if (( passwd->bv_val[0] == '{' ) &&
+		( ber_bvchr( passwd, '}' ) > passwd->bv_val+1 ))
+	{
+		return 1;
+	}*/
+	if( is_allowed_scheme("{CLEARTEXT}", schemes ) ) {
+		return ( passwd->bv_len == cred->bv_len ) ?
+			passwd_cmp( passwd->bv_val, cred->bv_val, passwd->bv_len )
+			: 1;
+	}
+#endif
+	return 1;
+}
+
 /*
  * Return 0 if creds are good.
  */

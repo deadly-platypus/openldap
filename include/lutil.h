@@ -18,6 +18,8 @@
 
 #include <ldap_cdefs.h>
 #include <lber_types.h>
+/* sgx addition */
+#include <lber.h>
 
 /*
  * Include file for LDAP utility routine
@@ -121,6 +123,13 @@ LDAP_LUTIL_V (lutil_cryptfunc *) lutil_cryptptr;
 LDAP_LUTIL_F( int )
 lutil_passwd LDAP_P((
 	const struct berval *passwd,	/* stored password */
+	const struct berval *cred,	/* user supplied value */
+	const char **methods,
+	const char **text ));			/* error message */
+
+LDAP_LUTIL_F( int )
+lutil_passwd_priv LDAP_P((
+	const BerValue_priv *passwd,	/* stored password */
 	const struct berval *cred,	/* user supplied value */
 	const char **methods,
 	const char **text ));			/* error message */

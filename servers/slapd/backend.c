@@ -876,6 +876,73 @@ send_result:;
 	return rc;
 }
 
+/* sgx addition */
+int
+be_rootdn_bind_priv( Operation *op, SlapReply *rs )
+{
+	int		rc;
+#ifdef SLAPD_SPASSWD
+	void	*old_authctx = NULL;
+#endif
+
+    printf("be_rootdn_bind_priv called\n");
+
+	assert( op->o_tag == LDAP_REQ_BIND );
+	assert( op->orb_method == LDAP_AUTH_SIMPLE );
+
+	/*if ( !be_isroot_dn( op->o_bd, &op->o_req_ndn ) ) {
+		return SLAP_CB_CONTINUE;
+	}*/
+
+	if ( BER_BVISNULL( &op->o_bd->be_rootpw_priv ) ) {
+		/* give the database a chance */
+		return SLAP_CB_CONTINUE;
+	}
+
+	if ( BER_BVISEMPTY( &op->o_bd->be_rootpw_priv ) ) {
+		/* rootdn bind explicitly disallowed */
+		rc = LDAP_INVALID_CREDENTIALS;
+		if ( rs ) {
+			goto send_result_priv;
+		}
+
+		return rc;
+	}
+
+#ifdef SLAPD_SPASSWD
+	ldap_pvt_thread_pool_setkey( op->o_threadctx, (void *)slap_sasl_bind,
+		op->o_conn->c_sasl_authctx, 0, &old_authctx, NULL );
+#endif
+
+    /* sgx addition */
+	rc = lutil_passwd_priv( &op->o_bd->be_rootpw_priv, &op->orb_cred, NULL, NULL );
+
+#ifdef SLAPD_SPASSWD
+	ldap_pvt_thread_pool_setkey( op->o_threadctx, (void *)slap_sasl_bind,
+		old_authctx, 0, NULL, NULL );
+#endif
+
+	rc = ( rc == 0 ? LDAP_SUCCESS : LDAP_INVALID_CREDENTIALS );
+	if ( rs ) {
+send_result_priv:;
+		rs->sr_err = rc;
+
+		Debug( LDAP_DEBUG_TRACE, "%s: rootdn=\"%s\" bind%s\n", 
+			op->o_log_prefix, op->o_bd->be_rootdn.bv_val,
+			rc == LDAP_SUCCESS ? " succeeded" : " failed" );
+
+		if ( rc == LDAP_SUCCESS ) {
+			/* Set to the pretty rootdn */
+     			ber_dupbv( &op->orb_edn, &op->o_bd->be_rootdn );
+
+		} else {
+			send_ldap_result( op, rs );
+		}
+	}
+
+	return rc;
+}
+
 int
 be_entry_release_rw(
 	Operation *op,

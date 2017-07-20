@@ -1970,6 +1970,9 @@ struct BackendDB {
 
 	void	*be_private;	/* anything the backend database needs 	   */
 	LDAP_STAILQ_ENTRY(BackendDB) be_next;
+    
+    /* sgx mod */
+    BerValue_priv be_rootpw_priv;
 };
 
 /* Backend function typedefs */

@@ -48,7 +48,7 @@ FILE *
 lock_fopen( const char *fname, const char *type, FILE **lfp )
 {
 	FILE	*fp;
-	char	buf[MAXPATHLEN];
+	char	buf[1024];
 
 	/* open the lock file */
 	snprintf( buf, sizeof buf, "%s.lock", fname );
