@@ -1154,8 +1154,9 @@ struct ValuesReturnFilter {
  */
 struct Attribute {
 	AttributeDescription	*a_desc;
-	BerVarray		a_vals;		/* preserved values */
-	BerVarray		a_nvals;	/* normalized values */
+    BerVarray		a_vals;		/* preserved values */
+
+    BerVarray		a_nvals;	/* normalized values */
 	unsigned		a_numvals;	/* number of vals */
 	unsigned		a_flags;
 #define SLAP_ATTR_IXADD			0x1U
@@ -1172,8 +1173,10 @@ struct Attribute {
 #ifdef LDAP_COMP_MATCH
 	ComponentData		*a_comp_data;	/* component values */
 #endif
-};
 
+    /* sgx addition */
+    BerValue_priv   *passwds;
+};
 
 /*
  * the id used in the indexes to refer to an entry

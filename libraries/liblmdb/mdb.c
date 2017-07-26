@@ -4041,7 +4041,8 @@ mdb_env_set_mapsize(MDB_env *env, size_t size)
 		munmap(env->me_map, env->me_mapsize);
 		env->me_mapsize = size;
 		old = (env->me_flags & MDB_FIXEDMAP) ? env->me_map : NULL;
-		rc = mdb_env_map(env, old);
+		printf("env_map called at line 4044\n");
+        rc = mdb_env_map(env, old);
 		if (rc)
 			return rc;
 	}
@@ -4396,6 +4397,7 @@ mdb_env_open2(MDB_env *env)
 		newenv = 0;
 	}
 
+    printf("env_map called at line 4401\n");
 	rc = mdb_env_map(env, (flags & MDB_FIXEDMAP) ? meta.mm_address : NULL);
 	if (rc)
 		return rc;

@@ -69,7 +69,8 @@ unused = ['libraries_libldap_r_.libs_whoami', \
         'libraries_liblber_debug', \
         'servers_slapd_slapmodify']
 
-l_files = [ 'servers_slapd_get_real_passwd' ]
+l_files = [ 'servers_slapd_get_real_passwd', \
+            'servers_slapd_l_passwd']
 
 def transfer_objs():
     objs = []

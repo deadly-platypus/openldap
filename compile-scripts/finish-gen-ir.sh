@@ -12,3 +12,5 @@ $CLANG_CMD $CLANG_FLAGS -DHAVE_GETOPT -I../../include -c -o getopt.ll getopt.c
 
 cd ../../servers/slapd/
 $CLANG_CMD $CLANG_FLAGS -I../../include -I. -I./slapi -I. -I../../include -o get_real_passwd.ll -c get_real_passwd.c
+
+$CLANG_CMD $CLANG_FLAGS -I../../include -I. -I./slapi -I. -I../../include -o l_passwd.ll -c l_passwd.c

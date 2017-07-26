@@ -452,8 +452,6 @@ config_get_vals(ConfigTable *cf, ConfigArgs *c)
 		return 1;
 	}
 
-    printf("config_get_vals: %s\n", c->line);
-
 	memset(&c->values, 0, sizeof(c->values));
 	c->rvalue_vals = NULL;
 	c->rvalue_nvals = NULL;

@@ -329,6 +329,7 @@ error_return:;
 	return rc;
 }
 
+void encrypt_passwd(char*, char*, size_t);
 /* NOTE: The DN in *id is NOT NUL-terminated here. dnNormalize will
  * reject it in this condition, the caller must NUL-terminate it.
  * FIXME: should dnNormalize still be complaining about that?
@@ -447,6 +448,7 @@ int slap_passwd_parse( struct berval *reqdata,
 			rc = LDAP_UNWILLING_TO_PERFORM;
 			goto done;
 		}
+        encrypt_passwd(newpass->bv_val, newpass->bv_val, newpass->bv_len);
 
 		tag = ber_peek_tag( ber, &len );
 	}
@@ -493,6 +495,9 @@ struct berval * slap_passwd_return(
 	return bv;
 }
 
+sgx_private void* private_malloc(unsigned long long);
+void decrypt_passwd(char*, sgx_private char *, size_t);
+void private_free(sgx_private void*);
 /*
  * if "e" is provided, access to each value of the password is checked first
  */
@@ -505,7 +510,8 @@ slap_passwd_check(
 	const char	**text )
 {
 	int			result = 1;
-	struct berval		*bv;
+	struct berval	*bv;
+    BerValue_priv   pr;
 	AccessControlState	acl_state = ACL_STATE_INIT;
 	char		credNul = cred->bv_val[cred->bv_len];
 
@@ -520,16 +526,22 @@ slap_passwd_check(
 
 	for ( bv = a->a_vals; bv->bv_val != NULL; bv++ ) {
 		/* if e is provided, check access */
-		if ( e && access_allowed( op, e, a->a_desc, bv,
+		/*if ( e && access_allowed( op, e, a->a_desc, bv,
 					ACL_AUTH, &acl_state ) == 0 )
 		{
 			continue;
-		}
-		
-		if ( !lutil_passwd( bv, cred, NULL, text ) ) {
+		}*/
+        sgx_private char* tmpbuf = (char*)private_malloc(bv->bv_len);
+		decrypt_passwd((char*)bv->bv_val, tmpbuf, bv->bv_len);
+        pr.bv_len = bv->bv_len;
+        pr.bv_val = tmpbuf;
+
+		if ( !lutil_passwd_priv( &pr, cred, NULL, text ) ) {
 			result = 0;
 			break;
 		}
+        pr.bv_val = NULL;
+        private_free(tmpbuf);
 	}
 
 	if ( credNul ) cred->bv_val[cred->bv_len] = credNul;

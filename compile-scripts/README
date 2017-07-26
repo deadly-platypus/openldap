@@ -15,6 +15,9 @@ To Create L:
 1. python compile-scripts/gen-l-wrappers.py ir/support/pruned.lf > ir/support/l_wrappers.c
 2. clang -g -m64 -o ir/build/l_wrapper.o -c ir/support/l_wrappers.c
 3. opt ir/L-files/servers_slapd_get_real_passwd.ll -o ir/L-files/servers_slapd_get_real_passwd.reg.ll
-4. llc ir/L-files/servers_slapd_get_real_passwd.reg.ll -o ir/L-files/servers_slapd_get_real_passwd.s
-5. clang -m64 -g -c ir/L-files/servers_slapd_get_real_passwd.s -o ir/L-files/servers_slapd_get_real_passwd.o
-3. clang -g -m64 -shared ir/build/l_wrapper.o ir/support/support.o ir/L-files/servers_slapd_get_real_passwd.o -o ir/build/openldap-L.dll -lws2_32 -lregex -lRpcrt4
+4. opt ir/L-files/servers_slapd_l_passwd.ll -o ir/L-files/servers_slapd_l_passwd.reg.ll
+5. llc ir/L-files/servers_slapd_get_real_passwd.reg.ll -o ir/L-files/servers_slapd_get_real_passwd.s
+6. llc ir/L-files/servers_slapd_l_passwd.reg.ll -o ir/L-files/servers_slapd_l_passwd.s
+7. clang -m64 -g -c ir/L-files/servers_slapd_get_real_passwd.s -o ir/L-files/servers_slapd_get_real_passwd.o
+8. clang -m64 -g -c ir/L-files/servers_slapd_l_passwd.s -o ir/L-files/servers_slapd_l_passwd.o
+9. clang -g -m64 -shared ir/build/l_wrapper.o ir/support/support.o ir/L-files/servers_slapd_get_real_passwd.o ir/L-files/servers_slapd_l_passwd.o -o ir/build/openldap-L.dll -lws2_32 -lregex -lRpcrt4
