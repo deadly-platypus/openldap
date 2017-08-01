@@ -885,7 +885,6 @@ be_rootdn_bind_priv( Operation *op, SlapReply *rs )
 	void	*old_authctx = NULL;
 #endif
 
-    printf("be_rootdn_bind_priv called\n");
 
 	assert( op->o_tag == LDAP_REQ_BIND );
 	assert( op->orb_method == LDAP_AUTH_SIMPLE );

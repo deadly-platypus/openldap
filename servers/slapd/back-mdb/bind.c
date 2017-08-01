@@ -54,7 +54,6 @@ mdb_bind( Operation *op, SlapReply *rs )
 		 * will be the same.  See ITS#4962 for discussion. */
 		break;
 	}
-    printf("be_rootdn_bind_priv returned\n");
 
 	rs->sr_err = mdb_opinfo_get(op, mdb, 1, &moi);
 	switch(rs->sr_err) {
@@ -67,11 +66,9 @@ mdb_bind( Operation *op, SlapReply *rs )
 	}
 
 	rtxn = moi->moi_txn;
-    printf("5\n");
 
 	/* get entry with reader lock */
 	rs->sr_err = mdb_dn2entry( op, rtxn, NULL, &op->o_req_ndn, &e, NULL, 0 );
-    printf("6\n");
 
 	switch(rs->sr_err) {
 	case MDB_NOTFOUND:
@@ -121,16 +118,13 @@ mdb_bind( Operation *op, SlapReply *rs )
 			goto done;
 		}
 
-		printf("calling slap_passwd_check...\n");
         if ( slap_passwd_check( op, e, a, &op->oq_bind.rb_cred,
 					&rs->sr_text ) != 0 )
 		{
-            printf("done\n");
 			/* failure; stop front end from sending result */
 			rs->sr_err = LDAP_INVALID_CREDENTIALS;
 			goto done;
 		}
-        printf("done\n");
 			
 		rs->sr_err = 0;
 		break;

@@ -31,6 +31,7 @@ def outputWrapper(lffile):
         #    args += "void *{}".format(chr(ord('a') + numargs - 1))
 
         func = "EXPORT int {}__wrapper({}) {{\n".format(funcname, args)
+        func +="\t__asm__(\"addq\t$8, (%rsp)\");\n"
         func += "\t__asm__(\"jmp {}\");\n\treturn 0;\n}}\n".format( \
                 funcname)
         sys.stdout.write(func)

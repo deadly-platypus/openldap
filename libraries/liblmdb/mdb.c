@@ -4764,9 +4764,15 @@ mdb_env_setup_locks(MDB_env *env, MDB_name *fname, int mode, int *excl)
 		mh = CreateFileMapping(env->me_lfd, NULL, PAGE_READWRITE,
 			0, 0, NULL);
 		if (!mh) goto fail_errno;
-		env->me_txns = MapViewOfFileEx(mh, FILE_MAP_WRITE, 0, 0, rsize, NULL);
+
+        //void* ptr = malloc(rsize);
+
+		env->me_txns = MapViewOfFileEx(mh, FILE_MAP_WRITE, 0, 0, rsize, (void*) 0x820000000);
 		CloseHandle(mh);
-		if (!env->me_txns) goto fail_errno;
+		if (!env->me_txns) {
+            printf("failed to memory map file: %d\n", GetLastError());
+            goto fail_errno;
+        }
 #else
 		void *m = mmap(NULL, rsize, PROT_READ|PROT_WRITE, MAP_SHARED,
 			env->me_lfd, 0);

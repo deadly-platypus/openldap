@@ -3,7 +3,7 @@
 # Tasks to be done to build U DLL
 PWD=`pwd`
 CLANG_CMD=$1
-CLANG_FLAGS="-g -m64 -S -emit-llvm"
+CLANG_FLAGS="-g -m64 -S -emit-llvm -fno-jump-tables -fno-builtin"
 
 # Generate missing ll files
 echo "Generating missing LL files"

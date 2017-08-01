@@ -107,7 +107,7 @@ def executeCompileCmd(compileCmd):
         # Emit IR
         if compileCmd.find('-emit-llvm') < 0:
             compileCmd = compileCmd.replace("clang", \
-                "%s -g -S -emit-llvm -fno-builtin" % newcc, 1)
+                "%s -g -S -emit-llvm -fno-builtin -fno-jump-tables" % newcc, 1)
         # Change *.o to *.ll
         compileCmd = changeOutputFileName(compileCmd)
 

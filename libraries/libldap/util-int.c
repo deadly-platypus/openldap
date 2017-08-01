@@ -850,7 +850,6 @@ char * ldap_pvt_get_fqdn( char *name )
 
 	rc = ldap_pvt_gethostbyname_a( name,
 		&he_buf, &ha_buf, &hp, &local_h_errno );
-
 	if( rc < 0 || hp == NULL || hp->h_name == NULL ) {
 		fqdn = LDAP_STRDUP( name );
 	} else {

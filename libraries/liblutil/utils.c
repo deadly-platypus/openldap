@@ -43,6 +43,8 @@
 int _trans_argv = 1;
 #endif
 
+void setERRNO(int);
+int getERRNO();
 #ifdef _WIN32
 /* Some Windows versions accept both forward and backslashes in
  * directory paths, but we always use backslashes when generating
@@ -397,7 +399,7 @@ DIR *opendir( char *path )
 	WIN32_FIND_DATA data;
 	
 	if (len+3 >= sizeof(tmp)) {
-		errno = ENAMETOOLONG;
+		setERRNO(ENAMETOOLONG);
 		return NULL;
 	}
 
@@ -409,7 +411,7 @@ DIR *opendir( char *path )
 	h = FindFirstFile( tmp, &data );
 
 	if ( h == INVALID_HANDLE_VALUE ) {
-		errno = win2errno( GetLastError());
+		setERRNO(win2errno( GetLastError()));
 		return NULL;
 	}
 
@@ -527,9 +529,9 @@ lutil_atolx( long *v, const char *s, int x )
 		return -1;
 	}
 
-	errno = 0;
+	setERRNO(0);
 	l = strtol( s, &next, x );
-	save_errno = errno;
+	save_errno = getERRNO();
 	if ( next == s || next[ 0 ] != '\0' ) {
 		return -1;
 	}
@@ -558,9 +560,9 @@ lutil_atoulx( unsigned long *v, const char *s, int x )
 		return -1;
 	}
 
-	errno = 0;
+	setERRNO(0);
 	ul = strtoul( s, &next, x );
-	save_errno = errno;
+	save_errno = getERRNO();
 	if ( next == s || next[ 0 ] != '\0' ) {
 		return -1;
 	}
@@ -590,13 +592,13 @@ lutil_atollx( long long *v, const char *s, int x )
 		return -1;
 	}
 
-	errno = 0;
+	setERRNO(0);
 #ifdef HAVE_STRTOLL
 	ll = strtoll( s, &next, x );
 #else /* HAVE_STRTOQ */
 	ll = (unsigned long long)strtoq( s, &next, x );
 #endif /* HAVE_STRTOQ */
-	save_errno = errno;
+	save_errno = getERRNO();
 	if ( next == s || next[ 0 ] != '\0' ) {
 		return -1;
 	}
@@ -630,13 +632,13 @@ lutil_atoullx( unsigned long long *v, const char *s, int x )
 		return -1;
 	}
 
-	errno = 0;
+	setERRNO(0);
 #ifdef HAVE_STRTOULL
 	ull = strtoull( s, &next, x );
 #else /* HAVE_STRTOUQ */
 	ull = (unsigned long long)strtouq( s, &next, x );
 #endif /* HAVE_STRTOUQ */
-	save_errno = errno;
+	save_errno = getERRNO();
 	if ( next == s || next[ 0 ] != '\0' ) {
 		return -1;
 	}
@@ -761,9 +763,9 @@ lutil_str2bin( struct berval *in, struct berval *out, void *ctx )
 			int ochunk;
 			memcpy( tbuf, pin, chunk );
 			tbuf[chunk] = '\0';
-			errno = 0;
+			setERRNO(0);
 			l = strtoul( tbuf, &end, 16 );
-			if ( errno )
+			if ( getERRNO() )
 				return -1;
 			ochunk = (chunk + 1)/2;
 			for ( i = ochunk - 1; i >= 0; i-- ) {
@@ -810,9 +812,9 @@ lutil_str2bin( struct berval *in, struct berval *out, void *ctx )
 		while ( len ) {
 			memcpy( tbuf, pin, chunk );
 			tbuf[chunk] = '\0';
-			errno = 0;
+			setERRNO(0);
 			l = strtol( tbuf, &end, 10 );
-			if ( errno ) {
+			if ( getERRNO() ) {
 				rc = -1;
 				goto decfail;
 			}
