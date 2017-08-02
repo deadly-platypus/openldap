@@ -3969,6 +3969,10 @@ mdb_env_map(MDB_env *env, void *addr)
 		sizehi, sizelo, NULL);
 	if (!mh)
 		return ErrCode();
+    if(addr== NULL)
+        addr = (void*) 0x82f000000;
+
+    printf("addr = %p\n", addr);
 	env->me_map = MapViewOfFileEx(mh, flags & MDB_WRITEMAP ?
 		FILE_MAP_WRITE : FILE_MAP_READ,
 		0, 0, msize, addr);
@@ -7576,7 +7580,7 @@ mdb_xcursor_init2(MDB_cursor *mc, MDB_xcursor *src_mx, int new_dupdata)
 static void
 mdb_cursor_init(MDB_cursor *mc, MDB_txn *txn, MDB_dbi dbi, MDB_xcursor *mx)
 {
-	mc->mc_next = NULL;
+    mc->mc_next = NULL;
 	mc->mc_backup = NULL;
 	mc->mc_dbi = dbi;
 	mc->mc_txn = txn;

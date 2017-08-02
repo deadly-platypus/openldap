@@ -52,6 +52,9 @@
 #define LBER_DEFAULT_READAHEAD	16384
 #endif
 
+void setERRNO(int);
+int getERRNO();
+
 Sockbuf *
 ber_sockbuf_alloc( void )
 {
@@ -321,7 +324,7 @@ ber_pvt_sb_do_write( Sockbuf_IO_Desc *sbiod, Sockbuf_Buf *buf_out )
 		ret = LBER_SBIOD_WRITE_NEXT( sbiod, buf_out->buf_base +
 			buf_out->buf_ptr, to_go );
 #ifdef EINTR
-		if ((ret<0) && (errno==EINTR)) continue;
+		if ((ret<0) && (getERRNO()==EINTR)) continue;
 #endif
 		break;
 	}
@@ -423,7 +426,7 @@ ber_int_sb_read( Sockbuf *sb, void *buf, ber_len_t len )
 		ret = sb->sb_iod->sbiod_io->sbi_read( sb->sb_iod, buf, len );
 
 #ifdef EINTR	
-		if ( ( ret < 0 ) && ( errno == EINTR ) ) continue;
+		if ( ( ret < 0 ) && ( getERRNO() == EINTR ) ) continue;
 #endif
 		break;
 	}
@@ -445,7 +448,7 @@ ber_int_sb_write( Sockbuf *sb, void *buf, ber_len_t len )
 		ret = sb->sb_iod->sbiod_io->sbi_write( sb->sb_iod, buf, len );
 
 #ifdef EINTR	
-		if ( ( ret < 0 ) && ( errno == EINTR ) ) continue;
+		if ( ( ret < 0 ) && ( getERRNO() == EINTR ) ) continue;
 #endif
 		break;
 	}
@@ -644,7 +647,7 @@ sb_rdahead_read( Sockbuf_IO_Desc *sbiod, void *buf, ber_len_t len )
 		ret = LBER_SBIOD_READ_NEXT( sbiod, p->buf_base + p->buf_end,
 			max );
 #ifdef EINTR	
-		if ( ( ret < 0 ) && ( errno == EINTR ) ) continue;
+		if ( ( ret < 0 ) && ( getERRNO() == EINTR ) ) continue;
 #endif
 		break;
 	}
@@ -949,7 +952,7 @@ sb_dgram_write( Sockbuf_IO_Desc *sbiod, void *buf, ber_len_t len )
 	/* fake error if write was not atomic */
 	if (rc < len) {
 # ifdef EMSGSIZE
-		errno = EMSGSIZE;
+		setERRNO(EMSGSIZE);
 # endif
 		return -1;
 	}
