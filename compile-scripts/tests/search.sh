@@ -5,12 +5,12 @@ modpass=grfg
 pass=test
 
 get () {
-    ldapsearch -x -D "cn=John Doe,ou=People,dc=example,dc=com" -w $modpass \
+    ldapsearch -h AKASHL-SP4.fareast.corp.microsoft.com -x \
+        -D "cn=John Doe,ou=People,dc=example,dc=com" -w $modpass \
         -b 'dc=example,dc=com' '(objectclass=*)' > /dev/null
 }
 
 echo "Starting..."
-sleep 1
 
 for i in `seq 1 $max`
 do
