@@ -193,7 +193,8 @@ static int dosearch LDAP_P((
 	LDAPControl **sctrls,
 	LDAPControl **cctrls,
 	struct timeval *timeout,
-	int	sizelimit ));
+	int	sizelimit,
+    int loopcount ));
 
 static char *tmpdir = NULL;
 static char *urlpre = NULL;
@@ -772,6 +773,20 @@ private_conn_setup( LDAP *ld )
 	}
 }
 
+int getloopcount(void) {
+    char *countstr = getenv("LOOP_COUNT");
+    if(!countstr) {
+        return 1;
+    } else {
+        int loopcount = atoi(countstr);
+        if(loopcount < 1) {
+            loopcount = 1;
+        }
+
+        return loopcount;
+    }
+}
+
 int
 main( int argc, char **argv )
 {
@@ -1218,9 +1233,11 @@ getNextPage:
 		}
 	}
 
+    int loopcount = getloopcount();
+
 	if ( infile == NULL ) {
 		rc = dosearch( ld, base, scope, NULL, filtpattern,
-			attrs, attrsonly, NULL, NULL, NULL, sizelimit );
+			attrs, attrsonly, NULL, NULL, NULL, sizelimit, loopcount );
 
 	} else {
 		rc = 0;
@@ -1233,7 +1250,7 @@ getNextPage:
 				first = 0;
 			}
 			rc1 = dosearch( ld, base, scope, filtpattern, line,
-				attrs, attrsonly, NULL, NULL, NULL, sizelimit );
+				attrs, attrsonly, NULL, NULL, NULL, sizelimit, loopcount );
 
 			if ( rc1 != 0 ) {
 				rc = rc1;
@@ -1362,10 +1379,13 @@ static int dosearch(
 	LDAPControl **sctrls,
 	LDAPControl **cctrls,
 	struct timeval *timeout,
-	int sizelimit )
+	int sizelimit,
+    int loopcount )
 {
-	char			*filter;
 	int			rc, rc2 = LDAP_OTHER;
+    
+    while(loopcount-- > 0) {
+	char			*filter;
 	int			nresponses;
 	int			nentries;
 	int			nreferences;
@@ -1579,7 +1599,7 @@ done:
 	if ( rc != LDAP_RES_SEARCH_RESULT ) {
 		tool_perror( "ldap_result", rc2, NULL, NULL, NULL, NULL );
 	}
-
+    }
 	return( rc2 );
 }
 
