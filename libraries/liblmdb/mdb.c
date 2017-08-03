@@ -3970,7 +3970,7 @@ mdb_env_map(MDB_env *env, void *addr)
 	if (!mh)
 		return ErrCode();
     if(addr== NULL)
-        addr = (void*) 0x82f000000;
+        addr = (void*) 0x3210000000;
 
     printf("addr = %p\n", addr);
 	env->me_map = MapViewOfFileEx(mh, flags & MDB_WRITEMAP ?
@@ -4771,7 +4771,7 @@ mdb_env_setup_locks(MDB_env *env, MDB_name *fname, int mode, int *excl)
 
         //void* ptr = malloc(rsize);
 
-		env->me_txns = MapViewOfFileEx(mh, FILE_MAP_WRITE, 0, 0, rsize, (void*) 0x820000000);
+		env->me_txns = MapViewOfFileEx(mh, FILE_MAP_WRITE, 0, 0, rsize, (void*) 0x3200000000);
 		CloseHandle(mh);
 		if (!env->me_txns) {
             printf("failed to memory map file: %d\n", GetLastError());

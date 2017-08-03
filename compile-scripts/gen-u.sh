@@ -12,5 +12,5 @@ $CLANG $CLANG_FLAGS $SUPPORT_DIR/sgx_start.o $SUPPORT_DIR/dll_startup.o \
     $SUPPORT_DIR/checks.o $SUPPORT_DIR/l_stubs.o $OBJ_DIR/*.o \
     $SUPPORT_DIR/sgx_end.o -o $BUILD_DIR/openldap-U.dll
 
-python $SUPPORT_DIR/dll_patch.py $BUILD_DIR/openldap-U.dll sgxg_pri 0x800000000
-python $SUPPORT_DIR/dll_patch.py $BUILD_DIR/openldap-U.dll sgxg_pub 0x810000000
+python $SUPPORT_DIR/dll_patch.py $BUILD_DIR/openldap-U.dll sgxg_pri 0x3000000000
+python $SUPPORT_DIR/dll_patch.py $BUILD_DIR/openldap-U.dll sgxg_pub 0x3110000000
