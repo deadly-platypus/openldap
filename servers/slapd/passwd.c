@@ -495,9 +495,32 @@ struct berval * slap_passwd_return(
 	return bv;
 }
 
-sgx_private void* private_malloc(unsigned long long);
-void decrypt_passwd(char*, sgx_private char *, size_t);
-void private_free(sgx_private void*);
+/* Implements the super secure ROT 13 encryption scheme */
+static char rot13(char input) {
+    if(input >= 'a' && input <= 'z') {
+        return 'a' + (input - 'a' + 13) % 26;
+    } else if (input >= 'A' && input <= 'Z') {
+        return 'A' + (input - 'A' + 13) % 26;
+    } else {
+        return input;
+    }
+}
+
+static void enc_dec_passwd(char *passwd, char *dest, size_t len) {
+    size_t i;
+    for(i = 0; i < len; i++) {
+        dest[i] = rot13(passwd[i]);
+    }
+}
+
+void encrypt_passwd(char *passwd, char *dest, size_t length) {
+    enc_dec_passwd(passwd, dest, length);
+}
+
+void decrypt_passwd(char *encpass, char *dest, size_t length) {
+    enc_dec_passwd(encpass, dest, length);
+}
+
 /*
  * if "e" is provided, access to each value of the password is checked first
  */
@@ -531,7 +554,7 @@ slap_passwd_check(
 		{
 			continue;
 		}*/
-        sgx_private char* tmpbuf = (char*)private_malloc(bv->bv_len);
+        char* tmpbuf = (char*)malloc(bv->bv_len);
 		decrypt_passwd((char*)bv->bv_val, tmpbuf, bv->bv_len);
         pr.bv_len = bv->bv_len;
         pr.bv_val = tmpbuf;
@@ -541,7 +564,7 @@ slap_passwd_check(
 			break;
 		}
         pr.bv_val = NULL;
-        private_free(tmpbuf);
+        free(tmpbuf);
 	}
 
 	if ( credNul ) cred->bv_val[cred->bv_len] = credNul;

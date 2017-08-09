@@ -17,6 +17,11 @@
 #ifndef _AC_STDLIB_H
 #define _AC_STDLIB_H
 
+#include <errno.h>
+
+int getERRNO();
+void setERRNO(int err);
+
 #if defined( HAVE_CSRIMALLOC )
 #include <stdio.h>
 #define MALLOC_TRACE

@@ -296,7 +296,7 @@ static struct berval *passwd_scheme(
 }
 
 int
-passwd_cmp(sgx_private char* passwd, char* cred, int length) {
+passwd_cmp(char* passwd, char* cred, int length) {
     int i;
     for(i = 0; i < length; i++) {
         if(passwd[i] != cred[i]) {

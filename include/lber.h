@@ -217,7 +217,7 @@ typedef struct berval {
 /* SGXC mod */
 typedef struct berval_priv {
     ber_len_t   bv_len;
-    sgx_private char              *bv_val;
+    char              *bv_val;
 } BerValue_priv;
 
 typedef BerValue *BerVarray;	/* To distinguish from a single bv */

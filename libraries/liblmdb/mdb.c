@@ -3970,7 +3970,7 @@ mdb_env_map(MDB_env *env, void *addr)
 	if (!mh)
 		return ErrCode();
     if(addr== NULL)
-        addr = (void*) 0x3210000000;
+        addr = (void*) 0x32100000000;
 
     printf("addr = %p\n", addr);
 	env->me_map = MapViewOfFileEx(mh, flags & MDB_WRITEMAP ?

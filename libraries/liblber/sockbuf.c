@@ -52,9 +52,6 @@
 #define LBER_DEFAULT_READAHEAD	16384
 #endif
 
-void setERRNO(int);
-int getERRNO();
-
 Sockbuf *
 ber_sockbuf_alloc( void )
 {

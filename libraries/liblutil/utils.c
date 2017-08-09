@@ -43,8 +43,11 @@
 int _trans_argv = 1;
 #endif
 
-void setERRNO(int);
-int getERRNO();
+
+int getERRNO() { return errno; }
+void setERRNO(int err) { errno = err; }
+
+
 #ifdef _WIN32
 /* Some Windows versions accept both forward and backslashes in
  * directory paths, but we always use backslashes when generating

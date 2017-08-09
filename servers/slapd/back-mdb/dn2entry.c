@@ -21,7 +21,6 @@
 
 #include "back-mdb.h"
 
-sgx_private void *private_malloc(unsigned long long);
 
 void privatize_passwds(Entry **e) {
     int i;
@@ -34,7 +33,7 @@ void privatize_passwds(Entry **e) {
         for(i = 0; attr->a_vals[i].bv_val != NULL; i++) {
             unsigned long long len = attr->a_vals[i].bv_len;
             attr->passwds[i].bv_len = len;
-            attr->passwds[i].bv_val = private_malloc(len);
+            attr->passwds[i].bv_val = malloc(len);
             for(unsigned long long j = 0; j < len; j++) {
                 attr->passwds[i].bv_val[j] = attr->a_vals[i].bv_val[j];
                 //attr->a_vals[i].bv_val[j] = '\0';

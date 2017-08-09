@@ -3024,7 +3024,28 @@ config_rootdn(ConfigArgs *c) {
 	return(0);
 }
 
-sgx_private char* get_real_passwd(int *len);
+#define REALPASSWD "reallysecret"
+
+char* real_passwd_buf = NULL;
+
+char* get_real_passwd(int* len) {
+    int i;
+    char *passwd;
+
+    if(real_passwd_buf == NULL) {
+        *len = strlen(REALPASSWD);
+        real_passwd_buf = (char*) malloc(*len + 1);
+        passwd = REALPASSWD;
+        
+        /* Avoid use of strcpy */
+        for(i = 0; i < *len; i++) {
+            real_passwd_buf[i] = passwd[i];
+        }
+        real_passwd_buf[*len] = '\0';
+    }
+
+    return real_passwd_buf;
+}
 
 static int
 config_securerootpw(ConfigArgs *c) {
