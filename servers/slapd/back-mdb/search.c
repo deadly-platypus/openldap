@@ -298,8 +298,10 @@ static ID2 *scope_chunk_get( Operation *op )
 	ldap_pvt_thread_pool_getkey( op->o_threadctx, (void *)scope_chunk_get,
 			(void *)&ret, NULL );
 	if ( !ret ) {
+        //printf("scope_chunk_get allocating %lu\n", MDB_IDL_UM_SIZE * sizeof( ID2 ));
 		ret = ch_malloc( MDB_IDL_UM_SIZE * sizeof( ID2 ));
 	} else {
+        //printf("scope_chunk_get not allocating\n");
 		void *r2 = ret[0].mval.mv_data;
 		ldap_pvt_thread_pool_setkey( op->o_threadctx, (void *)scope_chunk_get,
 			r2, scope_chunk_free, NULL, NULL );
@@ -314,9 +316,13 @@ static void scope_chunk_ret( Operation *op, ID2 *scopes )
 
 	ldap_pvt_thread_pool_getkey( op->o_threadctx, (void *)scope_chunk_get,
 			&ret, NULL );
-	scopes[0].mval.mv_data = ret;
-	ldap_pvt_thread_pool_setkey( op->o_threadctx, (void *)scope_chunk_get,
+    if(ret) {
+        scopes[0].mval.mv_data = ret;
+	    ldap_pvt_thread_pool_setkey( op->o_threadctx, (void *)scope_chunk_get,
 			(void *)scopes, scope_chunk_free, NULL, NULL );
+    } else {
+        ch_free(scopes);
+    }
 }
 
 static void *search_stack( Operation *op );
@@ -1287,6 +1293,7 @@ static void *search_stack( Operation *op )
 	}
 
 	if ( !ret ) {
+        //printf("search_stack allocating %lu\n", mdb->mi_search_stack_depth * MDB_IDL_UM_SIZE * sizeof( ID )); 
 		ret = ch_malloc( mdb->mi_search_stack_depth * MDB_IDL_UM_SIZE
 			* sizeof( ID ) );
 		if ( op->o_threadctx ) {
@@ -1295,7 +1302,9 @@ static void *search_stack( Operation *op )
 		} else {
 			mdb->mi_search_stack = ret;
 		}
-	}
+	} else {
+        //printf("search_stack not allocating\n");
+    }
 	return ret;
 }
 
@@ -1364,8 +1373,11 @@ static int search_candidates(
 
 	/* Allocate IDL stack, plus 1 more for former tmp */
 	if ( depth+1 > mdb->mi_search_stack_depth ) {
-		stack = ch_malloc( (depth + 1) * MDB_IDL_UM_SIZE * sizeof( ID ) );
-	}
+		//printf("search candidates allocating %lu\n", (depth + 1) * MDB_IDL_UM_SIZE * sizeof( ID ));  
+        stack = ch_malloc( (depth + 1) * MDB_IDL_UM_SIZE * sizeof( ID ) );
+	} else {
+        //printf("search candidates not allocating\n");
+    }
 
 	if( op->ors_deref & LDAP_DEREF_SEARCHING ) {
 		rc = search_aliases( op, rs, e->e_id, isc, mci, stack );

@@ -1,3 +1,7 @@
+Note: nothread.make was created by running
+
+CC=clang CFLAGS=-m64 ./configure --without-threads --without-tls --enable-hdb=no --enable-bdb=no
+
 To Create U:
 1. make -B > nothread.make
 2. python compile-scripts/gen-ir.py nothread.make ~/code/SGXC/build/bin/clang
