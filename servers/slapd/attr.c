@@ -124,16 +124,13 @@ attrs_alloc( int num )
 	return head;
 }
 
-void private_free(sgx_private void*);
-
 void
 attr_clean( Attribute *a )
 {
     if(a->a_desc == slap_schema.si_ad_userPassword) {
-        printf("freeing passwords\n");
         int i;
         for(i = 0; a->a_vals[i].bv_val != NULL; i++) {
-            private_free(a->passwds[i].bv_val);
+            free(a->passwds[i].bv_val);
             a->passwds[i].bv_val = NULL;
         }
         free(a->passwds);
