@@ -1454,7 +1454,7 @@ static int dosearch(
 		return( rc );
 	}
 
-//#if 0
+#if 0
 	nresponses = nentries = nreferences = nextended = npartial = 0;
 
 	res = NULL;

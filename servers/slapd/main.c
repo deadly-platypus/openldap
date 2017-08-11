@@ -348,12 +348,16 @@ usage( char *name )
     );
 }
 
+void public_head_init(unsigned long long, unsigned long long);
+
 #ifdef HAVE_NT_SERVICE_MANAGER
 void WINAPI ServiceMain( DWORD argc, LPTSTR *argv )
 #else
 int main( int argc, char **argv )
 #endif
 {
+    public_heap_init(0x3000000000ULL, 0x100000000ULL);
+
 	int		i, no_detach = 0;
 	int		rc = 1;
 	char *urls = NULL;
