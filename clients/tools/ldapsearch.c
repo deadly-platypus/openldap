@@ -39,6 +39,7 @@
 #include "portable.h"
 
 #include <stdio.h>
+#include <time.h>
 
 #include <ac/stdlib.h>
 #include <ac/ctype.h>
@@ -1235,6 +1236,7 @@ getNextPage:
 
     int loopcount = getloopcount();
 
+    clock_t start = clock();
 	if ( infile == NULL ) {
 		rc = dosearch( ld, base, scope, NULL, filtpattern,
 			attrs, attrsonly, NULL, NULL, NULL, sizelimit, loopcount );
@@ -1452,6 +1454,7 @@ static int dosearch(
 		return( rc );
 	}
 
+//#if 0
 	nresponses = nentries = nreferences = nextended = npartial = 0;
 
 	res = NULL;
@@ -1554,20 +1557,21 @@ static int dosearch(
 					msgidvalp, NULL, NULL, &cancel_msgid);
 				nresponses_psearch = -1;
 			}
+
 		}
 
 		ldap_msgfree( res );
-		fflush( stdout );
+		//fflush( stdout );
 	}
 
 done:
 	if ( tvp == NULL && rc != LDAP_RES_SEARCH_RESULT ) {
-		ldap_get_option( ld, LDAP_OPT_RESULT_CODE, (void *)&rc2 );
+		//ldap_get_option( ld, LDAP_OPT_RESULT_CODE, (void *)&rc2 );
 	}
 
 	ldap_msgfree( res );
 
-	if ( pagedResults ) { 
+    if ( pagedResults ) { 
 		npagedresponses += nresponses;
 		npagedentries += nentries;
 		npagedextended += nextended;
@@ -1595,10 +1599,10 @@ done:
 		if( npartial ) printf( _("# numPartial: %d\n"), npartial );
 		if( nreferences ) printf( _("# numReferences: %d\n"), nreferences );
 	}
-
 	if ( rc != LDAP_RES_SEARCH_RESULT ) {
 		tool_perror( "ldap_result", rc2, NULL, NULL, NULL, NULL );
 	}
+#endif 
     }
 	return( rc2 );
 }
